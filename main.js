@@ -37,7 +37,7 @@ function updateTodo() {
         title: 'Updated Todo'
         completed: true
     })
-    .then(res => showOutput(res))
+    .then(res => showOutput(res));
     .catch(err => console.error(err));
 }
 
