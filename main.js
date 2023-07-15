@@ -27,7 +27,7 @@ function addTodo() {
         title: 'New Todo'
         completed: false
     })
-    .then(res => showOutput(res))
+    .then(res => showOutput(res));
     .catch(err => console.error(err));
 }}
 
