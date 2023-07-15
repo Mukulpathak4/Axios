@@ -28,7 +28,7 @@ function addTodo() {
         completed: false
     })
     .then(res => showOutput(res));
-    .catch(err => console.error(err));
+    .catch(err => console.error(err))
 }}
 
 // PUT/PATCH REQUEST
