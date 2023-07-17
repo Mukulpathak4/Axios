@@ -1,77 +1,91 @@
-  window.onload = function () {
-            // localStorage.setItem("name", $('#inputName').val());
-            // localStorage.setItem("email", $('#inputEmail').val());
-        }
-        function saveToLocalStorage(event) {
-            event.preventDefault();
-            const name = event.target.username.value;
-            const email = event.target.email.value;
-            const phoneNumber = event.target.phoneNumber.value;
-            // localStorage.setItem('name', name);
-            // localStorage.setItem('email', email);
-            // localStorage.setItem('phoneNumber', phoneNumber);
-            
-            const obj = {
-                name,
-                email,
-                phoneNumber
-            }
-            // localStorage.setItem(obj.email, JSON.stringify(obj));
-             axios.post('https://crudcrud.com/api/14f066d02b2d493aa2477675e88b101d/appointmentData', obj)
-            .then((response) =>{
-                console.log(response.data);
-             
-               
-            })
-            .catch((err) =>{
-                console.log(err);
-            })
-            
-    
-        }
+window.onload = function () {
+    // Retrieve data from local storage and display it on screen
+    const storedData = JSON.parse(localStorage.getItem('appointmentData'));
+    if (storedData) {
+        storedData.forEach(obj => {
+            showUserOnScreen(obj);
+        });
+    }
+}
 
-        window.addEventListener("DOMContentLoaded", () =>{
-            axios.get("https://crudcrud.com/api/14f066d02b2d493aa2477675e88b101d/appointmentData")
-            .then((response)=>{
-                console.log(response)
-                 for(var i=0;i<response.data.length-1;i++)
-                {
-                    showUserOnScreen(response.data[i])
-                }
-            })
-            .catch((err)=>{
-                console.log(err);
-            })
+function saveToLocalStorage(event) {
+    event.preventDefault();
+    const name = event.target.username.value;
+    const email = event.target.email.value;
+    const phoneNumber = event.target.phoneNumber.value;
+
+    const obj = {
+        name,
+        email,
+        phoneNumber
+    };
+
+    axios.post('https://crudcrud.com/api/7c69cfe0043d455da15456a033d5eea5/appointmentData', obj)
+        .then((response) => {
+            console.log(response.data);
+            showUserOnScreen(response.data);
+            event.target.reset();
         })
-        function showUserOnScreen(obj) {
-            const parentElement = document.getElementById('listOfItems')
-            const childItem = document.createElement('li');
-            childItem.textContent = obj.name + '-' + obj.email + '-' + obj.phoneNumber
-            const deletebtn = document.createElement('input');
-            deletebtn.type = 'button'
-            deletebtn.value = 'Delete'
-            deletebtn.onclick = () => {
-               axios.delete(`https://crudcrud.com/api/14f066d02b2d493aa2477675e88b101d/appointmentData/${obj._id}`)
-                 .then((response) => {
-                 console.log(response.data);
-                 parentElement.removeChild(childItem);
-                })
-                .catch((err) => {
-                    console.log(err);
+        .catch((err) => {
+            console.log(err);
+        });
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+    const storedData = JSON.parse(localStorage.getItem('appointmentData'));
+    if (!storedData) {
+        axios.get("https://crudcrud.com/api/7c69cfe0043d455da15456a033d5eea5/appointmentData")
+            .then((response) => {
+                console.log(response);
+                const data = response.data;
+                localStorage.setItem('appointmentData', JSON.stringify(data));
+                data.forEach(obj => {
+                    showUserOnScreen(obj);
                 });
-};
-            const editbtn = document.createElement('input');
-            editbtn.type = 'button'
-            editbtn.value = 'Edit'
-            editbtn.onclick = () => {
-                localStorage.removeItem(obj.email);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
+});
+
+function showUserOnScreen(obj) {
+    const parentElement = document.getElementById('listOfItems')
+    const childItem = document.createElement('li');
+    childItem.textContent = obj.name + '-' + obj.email + '-' + obj.phoneNumber
+
+    const deletebtn = document.createElement('input');
+    deletebtn.type = 'button'
+    deletebtn.value = 'Delete'
+    deletebtn.onclick = () => {
+        axios.delete(`https://crudcrud.com/api/7c69cfe0043d455da15456a033d5eea5/appointmentData/${obj._id}`)
+            .then((response) => {
+                console.log(response.data);
+                parentElement.removeChild(childItem);
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
+
+    const editbtn = document.createElement('input');
+    editbtn.type = 'button'
+    editbtn.value = 'Edit'
+    editbtn.onclick = () => {
+        axios.delete(`https://crudcrud.com/api/7c69cfe0043d455da15456a033d5eea5/appointmentData/${obj._id}`)
+            .then((response) => {
+                console.log(response.data);
                 parentElement.removeChild(childItem);
                 document.getElementById('usernameInputTag').value = obj.name;
                 document.getElementById('emailInputTag').value = obj.email;
-                document.getElementById('phoneNumbernameInputTag').value = obj.phoneNumber;
+                document.getElementById('phoneNumberInputTag').value = obj.phoneNumber;
+            })
+            .catch((err) => {
+                console.log(err);
+            });
+    }
 
-            }
-            childItem.appendChild(deletebtn);
-            childItem.appendChild(editbtn);
-            parentElement.appendChild(childItem);
-        }
+    childItem.appendChild(deletebtn);
+    childItem.appendChild(editbtn);
+    parentElement.appendChild(childItem);
+}
