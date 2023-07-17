@@ -51,10 +51,15 @@
             deletebtn.type = 'button'
             deletebtn.value = 'Delete'
             deletebtn.onclick = () => {
-                localStorage.removeItem(obj.email);
-                parentElement.removeChild(childItem);
-                localStorage.removeItem(parentElement);
-            }
+               axios.delete(`https://crudcrud.com/api/14f066d02b2d493aa2477675e88b101d/appointmentData/${obj._id}`)
+                 .then((response) => {
+                 console.log(response.data);
+                 parentElement.removeChild(childItem);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+};
             const editbtn = document.createElement('input');
             editbtn.type = 'button'
             editbtn.value = 'Edit'
