@@ -1,0 +1,60 @@
+<html>
+
+<head>
+    <style>
+        h1 {
+            color: blue;
+            text-align: center;
+        }
+
+        button {
+            width: 500px;
+            background-color: palegreen;
+            color: blue;
+        }
+
+        form {
+            text-align: center;
+            background-color: aqua;
+            height: max-content;
+
+        }
+
+        label {
+            color: brown;
+        }
+
+        input {
+            background: yellow;
+            width: 1000px;
+            color: green;
+        }
+    </style>
+</head>
+
+
+<body>
+    <h1>FORM TO GET USER DETAILS</h1>
+    <form onsubmit="saveToLocalStorage(event)">
+        <label>Name:</label>
+        <input type="text" name="username" id="usernameInputTag" required>
+        <br>
+        <br>
+        <label>Email:</label>
+        <input type="email" name="email" id="emailInputTag" required>
+        <br>
+        <br>
+        <label>PhoneNo:</label>
+        <input type="tel" name="phoneNumber" id="phoneNumberInputTag" required>
+        <br>
+        <br>
+        <button>Submit</button>
+    </form>
+    <ul id="listOfItems"></ul>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+    <script src="formcrud.js">
+
+    </script>
+</body>
+
+</html>
