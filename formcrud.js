@@ -40,7 +40,7 @@ window.onload = function () {
             axios.post('https://crudcrud.com/api/14f066d02b2d493aa2477675e88b101d/appointmentData', obj)
             .then((response) =>{
                 console.log(response);
-                showUserOnScreen(response.data)
+                showUserOnScreen(response.data);
             })
             .catch((err) =>{
                 console.log(err);
