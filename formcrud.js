@@ -39,7 +39,7 @@ window.onload = function () {
             // localStorage.setItem(obj.email, JSON.stringify(obj));
             axios.post('https://crudcrud.com/api/14f066d02b2d493aa2477675e88b101d/appointmentData', obj)
             .then((response) =>{
-                console.log(response);
+                console.log(response)
                 showUserOnScreen(response.data);
             })
             .catch((err) =>{
