@@ -1,96 +1,124 @@
-window.onload = function () {
-  // Retrieve data from local storage and display it on the screen
-  const storedData = JSON.parse(localStorage.getItem('PRODUCTS'));
+    //  Function to fetch products from the server
+    async function fetchProducts() {
+            try {
+                const response = await axios.get("https://crudcrud.com/api/5e495996cd834db7b2b7d70d60c8bebe/PRODUCTS");
+                return response.data;
+            } catch (err) {
+                console.log(err);
+                return [];
+            }
+    }
 
-  if (storedData) {
-    let totalExpense = 0; // Initialize total expense
+    // Function to display all products on the screen
+    async function showAllProducts() {
+            const storedData = await fetchProducts();
+            if (storedData && storedData.length > 0) {
+                let totalExpense = 0; // Initialize total expense
+                const parentElement = document.getElementById('listOfItems');
+                parentElement.innerHTML = ''; // Clear the existing list
 
-    storedData.forEach(obj => {
-      showUserOnScreen(obj);
-      totalExpense += parseInt(obj.price); // Add the price to total expense
-    });
+                // Loop through the products and display each one
+                for (const obj of storedData) {
+                    showUserOnScreen(obj, parentElement);
+                    totalExpense += parseInt(obj.price); // Add the price to total expense
+                }
 
-    showTotalExpense(totalExpense); // Display the total expense
-  }
-};
+                showTotalExpense(totalExpense); // Display the total expense
+            }
+    }
 
-function saveToLocalStorage(event) {
-  event.preventDefault();
-  const price = event.target.price.value;
-  const productname = event.target.productname.value;
+   // Function to save product to the server
+   async function saveToServer(obj) {
+            try {
+                const response = await axios.post('https://crudcrud.com/api/5e495996cd834db7b2b7d70d60c8bebe/PRODUCTS', obj);
+                return response.data;
+            } catch (err) {
+                console.log(err);
+                return null;
+            }
+   }
 
-  const obj = {
-    price,
-    productname
-  };
+   // Function to delete product from the server
+   async function deleteFromServer(productId) {
+            try {
+                const response = await axios.delete(`https://crudcrud.com/api/5e495996cd834db7b2b7d70d60c8bebe/PRODUCTS/${productId}`);
+                console.log(response.data);
+                return true;
+            } catch (err) {
+                console.log(err);
+                return false;
+            }
+   }
 
-  axios.post('https://crudcrud.com/api/751ff91409734eed9aef5f41d081ee6b/PRODUCTS', obj)
-    .then((response) => {
-      console.log(response.data);
-      showUserOnScreen(response.data);
-      event.target.reset();
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-}
+   // Function to display a product on the screen
+   function showUserOnScreen(obj, parentElement) {
+            parentElement = parentElement || document.getElementById('listOfItems');
+            const childItem = document.createElement('li');
+            childItem.textContent = obj.price + '-' + obj.productname;
 
-window.addEventListener("DOMContentLoaded", () => {
-  const storedData = JSON.parse(localStorage.getItem('PRODUCTS'));
-  if (!storedData) {
-    axios.get("https://crudcrud.com/api/751ff91409734eed9aef5f41d081ee6b/PRODUCTS")
-      .then((response) => {
-        console.log(response);
-        const data = response.data;
-        localStorage.setItem('PRODUCTS', JSON.stringify(data));
-        let totalExpense = 0; // Initialize total expense
+            // Create a delete button for the product
+            const deletebtn = document.createElement('input');
+            deletebtn.type = 'button';
+            deletebtn.value = 'Delete';
+            deletebtn.onclick = async () => {
+                // Delete the product from the server and update the UI
+                const success = await deleteFromServer(obj._id);
+                if (success) {
+                    parentElement.removeChild(childItem);
+                    // Update the total expense after deletion
+                    let totalExpense = parseInt(document.getElementById('expense').textContent);
+                    totalExpense -= parseInt(obj.price);
+                    showTotalExpense(totalExpense);
+                }
+            };
+            childItem.appendChild(deletebtn);
+            parentElement.appendChild(childItem);
 
-        data.forEach(obj => {
-          showUserOnScreen(obj);
-          totalExpense += parseInt(obj.price); // Add the price to total expense
-        });
+            // Update the total expense when a new item is added
+            let totalExpense = parseInt(document.getElementById('expense').textContent);
+            totalExpense += parseInt(obj.price);
+            showTotalExpense(totalExpense);
+   }
 
-        showTotalExpense(totalExpense); // Display the total expense
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-});
+   // Function to display the total expense
+   function showTotalExpense(expense) {
+            const expenseElement = document.getElementById('expense');
+            expenseElement.textContent = expense;
+   }
 
-function showUserOnScreen(obj) {
-  const parentElement = document.getElementById('listOfItems');
-  const childItem = document.createElement('li');
-  childItem.textContent = obj.price + '-' + obj.productname;
+   // Function to initialize the page
+   async function init() {
+            const form = document.getElementById('productForm');
+            if (!form) {
+                // If the form is not found, wait for a short time and try again
+                await new Promise(resolve => setTimeout(resolve, 100));
+                return init();
+            }
 
-  const deletebtn = document.createElement('input');
-  deletebtn.type = 'button';
-  deletebtn.value = 'Delete';
-  deletebtn.onclick = () => {
-    axios.delete(`https://crudcrud.com/api/751ff91409734eed9aef5f41d081ee6b/PRODUCTS/${obj._id}`)
-      .then((response) => {
-        console.log(response.data);
-        parentElement.removeChild(childItem);
+            // Add event listener to the form submit event
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const price = event.target.price.value;
+                const productname = event.target.productname.value;
 
-        // Update the total expense after deletion
-        let totalExpense = parseInt(document.getElementById('expense').textContent);
-        totalExpense -= parseInt(obj.price);
-        showTotalExpense(totalExpense);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-  childItem.appendChild(deletebtn);
-  parentElement.appendChild(childItem);
+                const obj = {
+                    price,
+                    productname
+                };
 
-  // Update the total expense when a new item is added
-  let totalExpense = parseInt(document.getElementById('expense').textContent);
-  totalExpense += parseInt(obj.price);
-  showTotalExpense(totalExpense);
-}
+                // Save the product to the server and update the UI
+                const response = await saveToServer(obj);
+                if (response) {
+                    showUserOnScreen(response);
+                    event.target.reset();
+                }
+            });
 
-function showTotalExpense(expense) {
-  const expenseElement = document.getElementById('expense');
-  expenseElement.textContent = expense;
-}
+            // Display all products on the screen
+            await showAllProducts();
+   }
+
+   // Call the init function when the DOM is ready
+   document.addEventListener('DOMContentLoaded', () => {
+            init();
+   });

@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 
 <head>
@@ -22,7 +23,6 @@
         label {
             color: brown;
             font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-
         }
 
         #delbtn {
@@ -33,28 +33,23 @@
     </style>
 </head>
 
-
 <body>
-    <form onsubmit="saveToLocalStorage(event)">
+    <form id="productForm">
         <label>Selling Price:</label>
         <input type="number" name="price" id="usernameInputTag" required>
         <br>
         <br>
         <label>Product Name:</label>
         <input type="text" name="productname" id="emailInputTag" required>
-
-        <button>Add Product</button>
+        <button type="submit">Add Product</button>
     </form>
     <br>
     <br>
     <h1>PRODUCTS</h1>
     <ul id="listOfItems"></ul>
-    <h2>Total Expense</h2>
-    <ul id="expense"></ul>
+    <h2>Total Expense: <span id="expense">0</span></h2>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
-    <script src="formcrud.js">
-
-    </script>
+    <script src="formcrud.js"></script>
 </body>
 
 </html>
